@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
   const [songs, setSongs] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
   const [, forceUpdate] = React.useState(0);
 
   React.useEffect(() => {
@@ -65,14 +64,6 @@ function Home() {
     };
     x.send();
   }
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   function handleAscending() {
     setSongs(songs.sort((a, b) => (a.duration > b.duration ? 1 : -1)));
@@ -111,16 +102,7 @@ function Home() {
           <Grid container spacing={1} style={{ padding: 24 }}>
             {songs.map((currentSong) => (
               <Grid item xs={12} sm={6} lg={4} xl={3} key={currentSong.id}>
-                <Button variant="outlined" color="primary" onClick={handleOpen}>
-                  {currentSong.position}
-                  {".  "}
-                  {currentSong.title}
-                </Button>
-                <MyModal
-                  open={open}
-                  song={currentSong}
-                  handleClose={handleClose}
-                />
+                <MyModal song={currentSong} forceUpdate={forceUpdate} />
               </Grid>
             ))}
           </Grid>
