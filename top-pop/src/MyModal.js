@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useReducer } from "react";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
@@ -24,18 +24,32 @@ function getModalStyle() {
   };
 }
 
+function reducer(state, action) {
+  switch (action.type) {
+    case 'true':
+      return true;
+
+    case 'false':
+      return false;
+
+    default:
+      return state;
+  }
+
+}
+
 function MyModal(props) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, dispatch] = useReducer(reducer, false);
   const [modalStyle] = React.useState(getModalStyle);
 
   const handleClose = useCallback(() => {
-    setOpen(false);
+    dispatch({ type: 'false' })
     props.forceUpdate((n) => !n);
   }, [props]);
 
   const handleOpen = useCallback(() => {
-    setOpen(true);
+    dispatch({ type: 'true' })
     props.forceUpdate((n) => !n);
   }, [props]);
 
