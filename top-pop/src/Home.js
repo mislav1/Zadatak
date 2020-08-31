@@ -47,9 +47,9 @@ function Home() {
     );
   }
 
-  var cors_api_url = "https://cors-anywhere.herokuapp.com/";
+  const cors_api_url = "https://cors-anywhere.herokuapp.com/";
   function doCORSRequest(options, saveResult) {
-    var x = new XMLHttpRequest();
+    let x = new XMLHttpRequest();
     x.open(options.method, cors_api_url + options.url);
     x.onload = x.onerror = function () {
       saveResult(JSON.parse(x.responseText));
