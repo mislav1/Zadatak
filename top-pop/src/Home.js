@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -12,14 +12,6 @@ import MusicNoteSharpIcon from "@material-ui/icons/MusicNoteSharp";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    position: "absolute",
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-  paper2: {
     marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
@@ -36,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
 
 function Home() {
   const classes = useStyles();
-  const [songs, setSongs] = React.useState([]);
-  const [, forceUpdate] = React.useState(0);
+  const [songs, setSongs] = useState([]);
+  const [, forceUpdate] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getSongs();
   }, []);
 
@@ -65,24 +57,23 @@ function Home() {
     x.send();
   }
 
-  function handleAscending() {
+  const handleAscending = useCallback(() => {
     setSongs(songs.sort((a, b) => (a.duration > b.duration ? 1 : -1)));
-    forceUpdate((n) => !n);
-  }
+    forceUpdate((n) => !n)
+  }, [songs]);
 
-  function handleDescending() {
+  const handleDescending = useCallback(() => {
     setSongs(songs.sort((a, b) => (a.duration < b.duration ? 1 : -1)));
-    forceUpdate((n) => !n);
-  }
+    forceUpdate((n) => !n)
+  }, [songs]);
 
   return (
     <div>
-      {console.log("1")}
-      {songs ? (
+      {songs.length ? (
         <div>
           <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <div className={classes.paper2}>
+            <div className={classes.paper}>
               <Avatar className={classes.avatar}>
                 <MusicNoteSharpIcon />
               </Avatar>
@@ -108,8 +99,8 @@ function Home() {
           </Grid>
         </div>
       ) : (
-        "Loading..."
-      )}
+          "Loading..."
+        )}
     </div>
   );
 }

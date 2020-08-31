@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core/styles";
@@ -29,22 +29,20 @@ function MyModal(props) {
   const [open, setOpen] = React.useState(false);
   const [modalStyle] = React.useState(getModalStyle);
 
-  function handleClose() {
-    console.log(props.song);
+  const handleClose = useCallback(() => {
     setOpen(false);
     props.forceUpdate((n) => !n);
-  }
+  }, [props]);
 
-  function handleOpen() {
-    console.log("open");
+  const handleOpen = useCallback(() => {
     setOpen(true);
     props.forceUpdate((n) => !n);
-  }
+  }, [props]);
 
   return (
-    <div class="modal" id="modal">
+    <div className="modal" id="modal">
       <Button
-        fullWidth="true"
+        fullWidth={true}
         variant="outlined"
         color="primary"
         onClick={handleOpen}
