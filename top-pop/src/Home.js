@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import MyModal from "./MyModal";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import MusicNoteSharpIcon from "@material-ui/icons/MusicNoteSharp";
+import { Context } from "./App";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,48 +29,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Home() {
   const classes = useStyles();
-  const [songs, setSongs] = useState([]);
-  const [, forceUpdate] = useState(true);
-
-  useEffect(() => {
-    getSongs();
-  }, []);
-
-  function getSongs() {
-    doCORSRequest(
-      {
-        method: "GET",
-        url: "https://api.deezer.com/chart",
-      },
-      function saveResult(result) {
-        setSongs(result.tracks.data);
-      }
-    );
-  }
-
-  const cors_api_url = "https://cors-anywhere.herokuapp.com/";
-  function doCORSRequest(options, saveResult) {
-    let x = new XMLHttpRequest();
-    x.open(options.method, cors_api_url + options.url);
-    x.onload = x.onerror = function () {
-      saveResult(JSON.parse(x.responseText));
-    };
-    x.send();
-  }
-
-  const handleAscending = useCallback(() => {
-    setSongs(songs.sort((a, b) => (a.duration > b.duration ? 1 : -1)));
-    forceUpdate((n) => !n)
-  }, [songs]);
-
-  const handleDescending = useCallback(() => {
-    setSongs(songs.sort((a, b) => (a.duration < b.duration ? 1 : -1)));
-    forceUpdate((n) => !n)
-  }, [songs]);
+  const value = useContext(Context);
 
   return (
     <div>
-      {songs.length ? (
+      {!value.state.isApiLoading ? (
         <div>
           <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -85,15 +49,15 @@ function Home() {
                 color="primary"
                 aria-label="outlined primary button group"
               >
-                <Button onClick={handleAscending}>Sort ascending</Button>
-                <Button onClick={handleDescending}>Sort descending</Button>
+                <Button onClick={value.sortAsc}>Sort ascending</Button>
+                <Button onClick={value.sortDes}>Sort descending</Button>
               </ButtonGroup>
             </div>
           </Container>
           <Grid container spacing={1} style={{ padding: 24 }}>
-            {songs.map((currentSong) => (
+            {value.state.songs.map((currentSong) => (
               <Grid item xs={12} sm={6} lg={4} xl={3} key={currentSong.id}>
-                <MyModal song={currentSong} forceUpdate={forceUpdate} />
+                <MyModal song={currentSong} />
               </Grid>
             ))}
           </Grid>
